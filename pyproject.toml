@@ -3,7 +3,7 @@ name = "funtecplot"
 version = "1.0.4"
 description = "funtecplot"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 dependencies = ["numpy"]
 [[project.authors]]
 name = "niuliangtao"
