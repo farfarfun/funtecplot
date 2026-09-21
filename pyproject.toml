@@ -4,7 +4,8 @@ version = "1.0.4"
 description = "funtecplot"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["numpy"]
+license = "MIT"
+dependencies = ["numpy>=1.24"]
 [[project.authors]]
 name = "niuliangtao"
 email = "farfarfun@qq.com"

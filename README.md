@@ -43,6 +43,19 @@ TriangleData(
 
 `TriangleData`（`funtecplot/dump/triangle.py`）用于导出有限元三角形网格（`ZONE ... F=FEPOINT, ET=TRIANGLE`）：先写每个点的坐标+数据，再写三角形的顶点索引。
 
-> 注意：`funtecplot.dump` 目前只在包一级导出了 `PointData`，`TriangleData` 需要从 `funtecplot.dump.triangle` 单独导入。
+`PointData` 和 `TriangleData` 均可从 `funtecplot` 或 `funtecplot.dump` 导入。
 
 两者都继承自 `funtecplot.dump.base.Base`，核心逻辑是拼出 `TITLE` / `VARIABLES` / `ZONE` 头以及逐行的数据体，写入指定文件。
+
+---
+
+## 关于 farfarfun
+
+[farfarfun](https://github.com/farfarfun) 是一个专注于实用工具库的开源组织，
+涵盖云存储、数据处理、AI、多媒体与开发工具链等方向。
+
+- 🏠 组织主页：<https://github.com/farfarfun>
+- 📦 PyPI：<https://pypi.org/user/niuliangtao/>
+- 📧 联系：farfarfun@qq.com
+
+本项目基于 [MIT](LICENSE) 协议开源。

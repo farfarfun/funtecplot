@@ -1,16 +1,4 @@
-"""Smoke tests for funtecplot.
-
-funtecplot is pure logic (numpy arrays -> Tecplot ASCII text), no network/DB/cloud
-dependencies, so these tests exercise the real code paths against small, real
-numpy arrays and check the resulting files on disk. Nothing is mocked.
-
-Note: the README advertises ``from funtecplot import PointData`` but the
-top-level ``funtecplot/__init__.py`` is empty and does not re-export anything;
-the real, working import path is ``from funtecplot.dump import PointData``
-(or ``from funtecplot.dump.triangle import TriangleData``). This is a
-pre-existing documentation/business-logic mismatch, not something these smoke
-tests fix - see the tests below for the import paths that actually work.
-"""
+"""覆盖数组到 Tecplot ASCII 文件的真实导出路径。"""
 
 import numpy as np
 import pytest
@@ -33,14 +21,52 @@ def test_import_base_module():
     from funtecplot.dump.base import Base  # noqa: F401
 
 
-def test_top_level_reexport_is_missing():
-    """Documents a real gap: README says ``from funtecplot import PointData``
-    works, but funtecplot/__init__.py is empty, so it does not. This is a
-    business-logic/doc bug outside the scope of this smoke-test suite, so we
-    just pin the current (broken) behavior instead of silently ignoring it.
-    """
-    with pytest.raises(ImportError):
-        from funtecplot import PointData  # noqa: F401
+def test_top_level_reexports_public_api():
+    from funtecplot import PointData, TriangleData  # noqa: F401
+
+
+@pytest.mark.parametrize("kwargs", [{"axis_dim": 0}, {"axis_dim": 4}])
+def test_point_data_rejects_invalid_axis_dim(kwargs):
+    from funtecplot import PointData
+
+    with pytest.raises(ValueError, match="axis_dim"):
+        PointData(np.ones((2,)), variables=["x", "u"], data_dim=1, **kwargs)
+
+
+def test_point_data_rejects_shape_mismatch():
+    from funtecplot import PointData
+
+    with pytest.raises(ValueError, match="最后一维"):
+        PointData(
+            np.ones((2, 2)),
+            variables=["x", "u", "v", "w"],
+            axis_dim=1,
+            data_dim=3,
+        )
+
+
+def test_triangle_data_rejects_mismatched_points():
+    from funtecplot import TriangleData
+
+    with pytest.raises(ValueError, match="点数"):
+        TriangleData(
+            point=np.ones((2, 2)),
+            data=np.ones((1, 1)),
+            edge=np.ones((1, 3), dtype=int),
+            variables=["x", "y", "u"],
+        )
+
+
+def test_triangle_data_rejects_invalid_edges():
+    from funtecplot import TriangleData
+
+    with pytest.raises(ValueError, match="索引"):
+        TriangleData(
+            point=np.ones((3, 2)),
+            data=np.ones((3, 1)),
+            edge=np.array([[0, 1, 3]]),
+            variables=["x", "y", "u"],
+        )
 
 
 def test_point_data_2d_writes_tecplot_file(tmp_path):
