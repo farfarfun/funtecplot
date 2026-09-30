@@ -9,7 +9,15 @@ from .base import Base
 
 
 class PointData(Base):
-    """将规则网格数据导出为 Tecplot POINT 格式。"""
+    """将规则网格数据导出为 Tecplot POINT 格式。
+
+    Args:
+        data: 规则网格数据；可包含一个长度为 ``data_dim`` 的末维。
+        axis_dim: 坐标维数，只能为 1、2 或 3。
+        data_dim: 每个网格点的数据分量数，必须大于 0。
+        variables: 坐标和数据的变量名，数量必须为 ``axis_dim + data_dim``。
+        title: 可选的 Tecplot 数据集标题。
+    """
 
     def __init__(
         self,
@@ -19,7 +27,21 @@ class PointData(Base):
         variables: Sequence[str] | str | None = None,
         title: str | None = None,
     ) -> None:
-        """初始化数据、坐标维度、数据维度和变量名。"""
+        """初始化规则网格数据及其导出配置。
+
+        Args:
+            data: 规则网格数据；可包含一个长度为 ``data_dim`` 的末维。
+            axis_dim: 坐标维数，只能为 1、2 或 3。
+            data_dim: 每个网格点的数据分量数，必须大于 0。
+            variables: 坐标和数据的变量名，数量必须为 ``axis_dim + data_dim``。
+            title: 可选的 Tecplot 数据集标题。
+
+        Returns:
+            None。
+
+        Raises:
+            ValueError: 维数、数据形状或变量名数量不符合要求时抛出。
+        """
         if axis_dim not in (1, 2, 3):
             raise ValueError("axis_dim 必须是 1、2 或 3")
         if data_dim < 1:
@@ -50,7 +72,14 @@ class PointData(Base):
         self.zone["f"] = "point"
 
     def data_format(self, data: np.ndarray | float) -> str:
-        """格式化一行数据值。"""
+        """格式化一行数据值。
+
+        Args:
+            data: 标量或待格式化的数据数组。
+
+        Returns:
+            由空格分隔的字符串，最多包含 ``data_dim`` 个浮点数。
+        """
         values = np.asarray(data).reshape(-1)
         return " ".join(f"{value:6f}" for value in values[: self.data_dim])
 
@@ -64,7 +93,11 @@ class PointData(Base):
 
 
 def example() -> None:
-    """生成一个最小 POINT 示例文件。"""
+    """生成一个最小 POINT 示例文件。
+
+    Returns:
+        None。函数会在当前目录写入 ``example_1_1_1.txt``。
+    """
     PointData(
         data=np.random.rand(30), variables=["x", "u"], axis_dim=1, data_dim=1
     ).dump(Path("example_1_1_1.txt"))

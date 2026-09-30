@@ -9,7 +9,15 @@ from .base import Base
 
 
 class TriangleData(Base):
-    """将点坐标、点数据和三角形连接关系导出为 FEPOINT 格式。"""
+    """将点坐标、点数据和三角形连接关系导出为 FEPOINT 格式。
+
+    Args:
+        point: 二维点坐标数组，每行表示一个点。
+        data: 二维点数据数组，行数必须与 ``point`` 相同。
+        edge: 三角形连接数组，每行包含 3 个从零开始的点索引。
+        variables: 坐标和点数据的变量名，数量须等于两者列数之和。
+        title: 可选的 Tecplot 数据集标题。
+    """
 
     def __init__(
         self,
@@ -19,7 +27,21 @@ class TriangleData(Base):
         variables: Sequence[str] | str | None = None,
         title: str | None = None,
     ) -> None:
-        """初始化网格点、点数据、三角形连接关系和变量名。"""
+        """初始化三角形网格数据及其导出配置。
+
+        Args:
+            point: 二维点坐标数组，每行表示一个点。
+            data: 二维点数据数组，行数必须与 ``point`` 相同。
+            edge: 三角形连接数组，每行包含 3 个从零开始的点索引。
+            variables: 坐标和点数据的变量名，数量须等于两者列数之和。
+            title: 可选的 Tecplot 数据集标题。
+
+        Returns:
+            None。
+
+        Raises:
+            ValueError: 数组为空、形状不匹配、索引越界或变量名数量不符时抛出。
+        """
         points = np.asarray(point)
         values = np.asarray(data)
         edges = np.asarray(edge)
@@ -46,11 +68,25 @@ class TriangleData(Base):
         self.zone["et"] = "triangle"
 
     def data_format(self, data: np.ndarray | float) -> str:
-        """格式化坐标或数据值。"""
+        """格式化坐标或数据值。
+
+        Args:
+            data: 标量或待格式化的数据数组。
+
+        Returns:
+            由空格分隔的浮点数字符串。
+        """
         return " ".join(f"{value:6f}" for value in np.asarray(data).reshape(-1))
 
     def format_int(self, data: np.ndarray) -> str:
-        """格式化三角形顶点索引。"""
+        """格式化三角形顶点索引。
+
+        Args:
+            data: 待格式化的顶点索引数组。
+
+        Returns:
+            由空格分隔的整数字符串。
+        """
         return " ".join(str(int(value)) for value in np.asarray(data).reshape(-1))
 
     def _dump(self) -> list[str]:
@@ -64,7 +100,11 @@ class TriangleData(Base):
 
 
 def example() -> None:
-    """生成一个最小三角形网格示例文件。"""
+    """生成一个最小三角形网格示例文件。
+
+    Returns:
+        None。函数会在当前目录写入 ``001.dat``。
+    """
     TriangleData(
         variables=["x", "y", "ux", "uy"],
         point=np.random.random((10, 2)),

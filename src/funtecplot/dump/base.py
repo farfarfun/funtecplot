@@ -5,10 +5,26 @@ from typing import Sequence
 
 
 class Base:
-    """生成 Tecplot 文件头并委托子类生成数据体。"""
+    """生成 Tecplot 文件头并委托子类生成数据体。
+
+    Args:
+        variables: Tecplot 变量名序列，或以逗号分隔的变量名字符串，不能为空。
+        title: 可选的 Tecplot 数据集标题。
+    """
 
     def __init__(self, variables: Sequence[str] | str | None = None, title: str | None = None) -> None:
-        """初始化变量名和可选标题。"""
+        """初始化变量名和可选标题。
+
+        Args:
+            variables: Tecplot 变量名序列，或以逗号分隔的变量名字符串，不能为空。
+            title: 可选的 Tecplot 数据集标题。
+
+        Returns:
+            None。
+
+        Raises:
+            ValueError: ``variables`` 为空时抛出。
+        """
         if variables is None:
             raise ValueError("variables 不能为空")
         self.variables = variables
@@ -17,7 +33,14 @@ class Base:
         self.data: object = []
 
     def dump(self, filepath: str | Path) -> None:
-        """将当前对象导出到指定文件。"""
+        """将当前对象导出到指定文件。
+
+        Args:
+            filepath: 输出文件路径；文件已存在时会被覆盖。
+
+        Returns:
+            None。方法会在指定路径写入 Tecplot ASCII 文件。
+        """
         variables = self.variables
         if isinstance(variables, str):
             variables = variables.strip().split(",")
