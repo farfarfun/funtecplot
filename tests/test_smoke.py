@@ -21,6 +21,34 @@ def test_import_base_module():
     from funtecplot.dump.base import Base  # noqa: F401
 
 
+def _make_dummy():
+    from funtecplot.dump.base import Base
+
+    class Dummy(Base):
+        def _dump(self):
+            return ["line"]
+
+    return Dummy
+
+
+@pytest.mark.parametrize("variables", ["", [], ["x", ""], ["", "y"], ["  "]])
+def test_base_rejects_empty_or_blank_variables(variables):
+    Dummy = _make_dummy()
+
+    with pytest.raises(ValueError, match="variables 不能为空"):
+        Dummy(variables=variables)
+
+
+def test_base_dump_round_trips_comma_separated_variables(tmp_path):
+    Dummy = _make_dummy()
+    out_file = tmp_path / "base_dump.dat"
+
+    Dummy(variables="x, y").dump(str(out_file))
+
+    content = out_file.read_text()
+    assert content.splitlines()[0] == 'VARIABLES = "x", "y"'
+
+
 def test_top_level_reexports_public_api():
     from funtecplot import PointData, TriangleData  # noqa: F401
 

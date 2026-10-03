@@ -23,11 +23,16 @@ class Base:
             None。
 
         Raises:
-            ValueError: ``variables`` 为空时抛出。
+            ValueError: ``variables`` 为 ``None``、空字符串、空序列，或其中包含
+                空白变量名时抛出。
         """
         if variables is None:
             raise ValueError("variables 不能为空")
-        self.variables = variables
+        names = variables.split(",") if isinstance(variables, str) else list(variables)
+        names = [str(name).strip() for name in names]
+        if not names or any(name == "" for name in names):
+            raise ValueError("variables 不能为空")
+        self.variables = names
         self.title = title
         self.zone: dict[str, int | str] = {}
         self.data: object = []
@@ -41,10 +46,7 @@ class Base:
         Returns:
             None。方法会在指定路径写入 Tecplot ASCII 文件。
         """
-        variables = self.variables
-        if isinstance(variables, str):
-            variables = variables.strip().split(",")
-        names = ", ".join(f'"{var}"' for var in variables)
+        names = ", ".join(f'"{var}"' for var in self.variables)
         with open(filepath, "w") as file:
             if self.title:
                 file.write(f"TITLE = {self.title}\n")
