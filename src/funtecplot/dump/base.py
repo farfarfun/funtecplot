@@ -1,7 +1,7 @@
 """Tecplot 导出器的共享基类。"""
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 
 class Base:
@@ -12,7 +12,9 @@ class Base:
         title: 可选的 Tecplot 数据集标题。
     """
 
-    def __init__(self, variables: Sequence[str] | str | None = None, title: str | None = None) -> None:
+    def __init__(
+        self, variables: Sequence[str] | str | None = None, title: str | None = None
+    ) -> None:
         """初始化变量名和可选标题。
 
         Args:
@@ -53,8 +55,7 @@ class Base:
             file.write(f"VARIABLES = {names}\n")
             zone = " ".join(f"{key}={value}" for key, value in self.zone.items())
             file.write(f"ZONE {zone}\n")
-            for line in self._dump():
-                file.write(f"{line}\n")
+            file.writelines(f"{line}\n" for line in self._dump())
 
     def _dump(self) -> list[str]:
         """返回待写入的数据行；由具体导出器实现。"""

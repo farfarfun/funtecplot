@@ -97,6 +97,18 @@ def test_triangle_data_rejects_invalid_edges():
         )
 
 
+def test_triangle_data_rejects_non_integer_edges():
+    from funtecplot import TriangleData
+
+    with pytest.raises(ValueError, match="必须是整数"):
+        TriangleData(
+            point=np.ones((3, 2)),
+            data=np.ones((3, 1)),
+            edge=np.array([[0.5, 1, 2]]),
+            variables=["x", "y", "u"],
+        )
+
+
 def test_point_data_2d_writes_tecplot_file(tmp_path):
     from funtecplot.dump import PointData
 
@@ -203,3 +215,4 @@ def test_triangle_data_writes_fepoint_tecplot_file(tmp_path):
         assert len(line.split()) == 3
         for token in line.split():
             assert token.isdigit()
+    assert edge_rows == ["1 2 3", "2 3 4"]
