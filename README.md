@@ -41,7 +41,7 @@ TriangleData(
 ).dump("mesh.dat")
 ```
 
-`TriangleData`（`funtecplot/dump/triangle.py`）用于导出有限元三角形网格（`ZONE ... F=FEPOINT, ET=TRIANGLE`）：先写每个点的坐标+数据，再写三角形的顶点索引。
+`TriangleData`（`funtecplot/dump/triangle.py`）用于导出有限元三角形网格（`ZONE ... F=FEPOINT, ET=TRIANGLE`）：先写每个点的坐标+数据，再写三角形的顶点索引。`edge` 接受从零开始的整数点索引，导出时会自动转换为 Tecplot FEPOINT 要求的从一开始的节点编号。
 
 `PointData` 和 `TriangleData` 均可从 `funtecplot` 或 `funtecplot.dump` 导入。
 
