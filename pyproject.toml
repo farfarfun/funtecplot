@@ -18,4 +18,4 @@ build-backend = "hatchling.build"
 license-files = []
 
 [dependency-groups]
-dev = ["pytest>=9.0.3"]
+dev = ["pytest>=9.0.3", "ruff>=0.14.0"]
