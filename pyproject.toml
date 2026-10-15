@@ -5,6 +5,7 @@ description = "Export NumPy arrays to Tecplot ASCII data files."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
+license-files = ["LICENSE"]
 dependencies = ["numpy>=1.24"]
 [[project.authors]]
 name = "niuliangtao"
@@ -13,9 +14,6 @@ email = "farfarfun@qq.com"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.setuptools]
-license-files = []
 
 [dependency-groups]
 dev = ["pytest>=9.0.3", "ruff>=0.14.0"]
